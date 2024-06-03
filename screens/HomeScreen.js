@@ -1,15 +1,25 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { View, Text, SafeAreaView, ScrollView, ImageBackground, TextInput, Touchable, TouchableOpacity } from 'react-native'
 import Feather from 'react-native-vector-icons/Feather'
 import Carousel from 'react-native-snap-carousel';
-import { sliderData } from '../model/data';
+import { freeGames, paidGames, sliderData } from '../model/data';
 import BannerSlider from '../components/BannerSlider';
 import {windowWidth} from '../utils/Dimensions'
+import CustomSwitch from '../components/CustomSwitch';
+
+import ListItem from '../components/ListItem';
 
 
-function HomeScreen() {
+function HomeScreen({navigation}) {
+  const [gamesTab, setGameTab] = useState(1)
+
   const renderBanner = ({item, index}) => {
     return <BannerSlider data={item}/>
+  };
+
+  const onSelectSwitch = (value) => {
+    setGameTab(value)
+     
   }
     return(
        <SafeAreaView style={{flex:1, backgroundColor:'#fff'}}>
@@ -27,11 +37,13 @@ function HomeScreen() {
             Usuario
             </Text>
           </Text>
+          <TouchableOpacity onPress={() => navigation.openDrawer()}>
             <ImageBackground 
             source={require('../assets/images/kemonito.png')}
             style={{width:35, height:35}}
             imageStyle={{borderRadius:25}}
             />
+          </TouchableOpacity>
           </View>
           {/* Aquí se acaba el encabezado de la pantalla */}
           
@@ -59,6 +71,38 @@ function HomeScreen() {
               loop={true}
             />
           {/* Fin del carrusel */}
+          <View style={{marginVertical:'5%'}}>
+            <CustomSwitch 
+            selectionMode={1} 
+            option1="Free to play" 
+            option2="Paid games"
+            onSelectSwitch={onSelectSwitch}
+            />
+          </View>
+          
+          {gamesTab == 1 && 
+            freeGames.map(item => (
+              <ListItem 
+              key={item.id} 
+              photo={item.poster} 
+              title={item.title} 
+              subTitle={item.subtitle}
+              isFree={item.isFree}
+              />
+              ))
+          }
+          {gamesTab == 2 && 
+            paidGames.map(item => (
+              <ListItem 
+              key={item.id} 
+              photo={item.poster} 
+              title={item.title} 
+              subTitle={item.subtitle}
+              isFree={item.isFree}
+              price={item.price}
+              />
+            ))
+          }
 
         </ScrollView>
        </SafeAreaView>
